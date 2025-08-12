@@ -94,6 +94,7 @@ Este projeto — desenvolvido como Trabalho de Conclusão de Curso — propõe a
 ├── package.json         # Dependências e scripts do projeto
 └── README.md            # Este documento
 ```
+> **Nota:** A estrutura poderá ser atualizada conforme a evolução do projeto.
 
 ---
 
