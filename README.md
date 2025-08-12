@@ -108,3 +108,4 @@ Este projeto — desenvolvido como Trabalho de Conclusão de Curso — propõe a
 | **Vagner Gomes de Gois Junior** | N84952 |
 
 ---
+> **Nota:** Toda informação do projeto poderá ser atualizada conforme a evolução do projeto.
