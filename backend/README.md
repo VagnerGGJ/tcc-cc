@@ -13,6 +13,8 @@ O backend é desenvolvido em Python com FastAPI, utilizando SQLAlchemy para ORM 
 
 A estrutura do backend é organizada da seguinte forma:
 
+```
+
 backend/
 ├── app/
 |   ├── ai                  # Endpoints de IA
@@ -34,6 +36,8 @@ backend/
 ├── main.py                 # Ponto de entrada da aplicação
 ├── requirements.txt        # Dependências do projeto
 └── README.md               # Este documento
+
+```
 
 🗂️ Scripts Úteis
 
