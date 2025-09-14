@@ -3,8 +3,8 @@ fastapi==0.111.1
 uvicorn[standard]==0.23.2
 
 # Banco de dados
-sqlalchemy==2.0.22
-psycopg2-binary==2.9.7
+sqlalchemy
+psycopg2-binary
 
 # Segurança e autenticação
 passlib[bcrypt]==1.7.4
@@ -14,7 +14,7 @@ python-jose==3.3.0
 python-dotenv==1.0.0
 
 # Validação de dados
-pydantic==2.4.1
+pydantic
 
 # Para chamadas HTTP externas (ex: integração IA)
 requests==2.32.0
@@ -27,4 +27,14 @@ pytest==7.4.2
 pytest-asyncio==0.21.0
 
 # Utilitários
-python-multipart==0.0.6  # Para upload de arquivos, se precisar no futuro
+python-multipart
+
+# IA e LangChain
+langchain
+langchain-community
+langchain-huggingface
+langchain-ollama
+pypdf
+faiss-cpu
+sentence-transformers
+huggingface_hub

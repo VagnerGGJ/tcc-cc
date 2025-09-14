@@ -29,7 +29,7 @@
 A evasão escolar no ensino superior brasileiro é um desafio estrutural que impacta milhares de estudantes todos os anos.  
 Este projeto — desenvolvido como Trabalho de Conclusão de Curso — propõe a criação de uma Inteligência Artificial modular integrada a aplicativos universitários, oferecendo respostas rápidas, orientações personalizadas e suporte contínuo.
 
-O **backend** atual foca na autenticação do usuário **admin**, responsável por cadastrar informações que a IA utilizará para treinamento e consultas.
+O **backend** atual é responsável pela autenticação do usuário **admin**, que gerencia o cadastro das informações utilizadas para o treinamento da IA. Além disso, ele oferece suporte às consultas por meio do Chatbot, integrado ao modelo **Llama3** fornecido pela **Ollama**. A IA foi treinada com o Manual do Aluno da UNIP, que serve como sua principal fonte de conhecimento para gerar respostas precisas.
 
 ---
 
@@ -63,70 +63,97 @@ backend/
 └── README.md               # Este documento
 ```
 
----
+## ⚙️ Configuração do ambiente
 
-## 🗂️ Scripts Úteis
+Siga os passos abaixo para preparar e rodar o projeto.
 
-- `scripts/init_db.py` → Cria todas as tabelas no banco de dados. Deve ser executado uma vez antes de rodar a aplicação.  
-- `scripts/create_admin_user.py` → Cria o usuário admin inicial para login. Deve ser executado após `init_db.py`.
+### 1. Pré-requisitos
 
----
+- **Python 3.11+** instalado.
+- **Ollama** instalado: [Baixar Ollama](https://ollama.com/).
+- **Conta no Hugging Face** para baixar o modelo de embeddings.
 
-## ⚙️ Configuração do .env
+### 2. Preparação Inicial
 
-Crie um arquivo **.env** na raiz do backend com as seguintes variáveis:
+- Clone este repositório.
+- Crie e ative um ambiente virtual:
+  ```bash
+  python -m venv venv
+  # Windows: .\venv\Scripts\activate | Linux/macOS: source venv/bin/activate
+  ```
+- Instale todas as dependências:
+  ```bash
+  pip install -r requirements.txt
+  ```
 
-```
-SECRET_KEY=sua_chave_secreta
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-DATABASE_URL=postgresql://usuario:senha@localhost:5432/nome_do_banco
-```
+### 3. Configuração do `.env`
 
-- **SECRET_KEY** → chave secreta para gerar JWT  
-- **ALGORITHM** → algoritmo de criptografia do JWT (ex: HS256)  
-- **ACCESS_TOKEN_EXPIRE_MINUTES** → tempo de expiração do token  
-- **DATABASE_URL** → URL de conexão com o banco PostgreSQL  
+- Crie um arquivo `.env` na raiz do backend com as seguintes variáveis:
+  ```env
+  SECRET_KEY=sua_chave_secreta_para_jwt
+  ALGORITHM=HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES=60
+  DATABASE_URL=sqlite:///./meu_tcc.db (Usando o SQLite pois não precisa de configuração, é apenas pra rodar e testar o projeto, posteriormente configure o postgres.)
+  ```
+
+### 4. Configuração da Inteligência Artificial
+
+- **Autentique-se no Hugging Face** (necessário apenas na primeira vez):
+  ```bash
+  python -m huggingface_hub.commands.huggingface_cli login
+  # Cole seu token de acesso do Hugging Face
+  ```
+- **Baixe o modelo Llama 3** via Ollama:
+  ```bash
+  Com o PowerShell aberto, digite:
+  ollama pull llama3:8b
+  ```
 
 ---
 
 ## 💻 Como Rodar o Projeto
 
-### 1. Criar e ativar o ambiente virtual:
+O sistema completo requer **três terminais** rodando em paralelo.
 
-```bash
-python -m venv venv
+### Terminal 1: Banco de Dados
 
-# Windows
-venv\Scripts\activate
+- Certifique-se de que seu servidor PostgreSQL está rodando (Se caso já estiver configurado, senão, se estiver usando SQLite, pule essa etapa).
 
-# Linux/Mac
-source venv/bin/activate
-```
+### Terminal 2: Servidor de IA (Ollama)
 
-### 2. Instalar dependências:
+- Inicie o servidor do Ollama.
+  ```bash
+  ollama serve
+  ```
+- Observação: Se precisar usar uma porta diferente da padrão (11434), defina a variável de ambiente `OLLAMA_BASE_URL` antes de executar o comando, a porta default aqui é: 11435.
+- **Deixe este terminal aberto.**
 
-```bash
-pip install -r requirements.txt
-```
+### Terminal 3: Servidor do Backend (FastAPI)
 
-### 3. Inicializar o banco e criar o admin:
+- **(Apenas na primeira vez)** Inicialize o banco de dados e crie os índices da IA:
+  ```bash
+  # Navegue para a pasta `backend` e ative o venv
+  python -m scripts.create_tables       # Cria as tabelas do PostgreSQL
+  python -m scripts.create_admin        # Cria o usuário admin
+  python -m scripts.create_index_pdf    # Processa o PDF e cria o banco vetorial
+  ```
+- **Inicie o servidor principal:**
+  ```bash
+  # Certifique-se que o venv está ativo
+  uvicorn app.main:app --reload
+  ```
 
-```bash
-python scripts/init_db.py
-python scripts/create_admin_user.py
-```
+### 6. Testar endpoints:
 
-### 4. Rodar o backend:
-
-```bash
-uvicorn main:app --reload
-```
-
-### 5. Testar endpoints:
-
-- `POST /auth/login` → retorna o token JWT do admin  
-- `GET /admin/test` → endpoint protegido que retorna a mensagem de autenticação  
+- **Autenticação:** `POST /auth/login` → retorna o token JWT do admin
+- **Admin (Protegido):** `GET /admin/test` → endpoint protegido que retorna a mensagem de autenticação
+- **IA (Saúde do Serviço):** `GET /ai/health`
+- **IA (Fazer Pergunta):** `POST /ai/query` com um corpo JSON:
+  ```json
+  {
+    "question": "Qual seria o objetivo do PIM?"
+  }
+  ```
 
 > Para testar endpoints protegidos por JWT, recomenda-se usar **Postman** até configurarmos o Swagger para aceitar tokens.
 
@@ -134,6 +161,6 @@ uvicorn main:app --reload
 
 ## 📝 Observações
 
-- O backend está preparado para integração com módulos da IA no futuro.  
-- Endpoints adicionais, base de conhecimento e funcionalidades administrativas serão adicionados conforme o projeto evolui.  
-- Todos os scripts e a estrutura estão organizados para que outros desenvolvedores possam entender rapidamente o funcionamento do sistema.  
+- O backend está preparado para integração com módulos da IA no futuro.
+- Endpoints adicionais, base de conhecimento e funcionalidades administrativas serão adicionados conforme o projeto evolui.
+- Todos os scripts e a estrutura estão organizados para que outros desenvolvedores possam entender rapidamente o funcionamento do sistema.
