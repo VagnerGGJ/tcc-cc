@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- Configurações de Autenticação e JWT ---
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = os.getenv("SECRET_KEY", "minha_chave_secreta_super_segura")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
 # --- Configuração do Banco de Dados Principal (PostgreSQL/SQLite) ---
@@ -21,4 +21,4 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3:8b")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11435")
 
 # PDF
-PDF_FILE_PATH = os.getenv("PDF_FILE_PATH", "app/pdf/unip.pdf") 
+PDF_DIR = os.getenv("PDF_DIR", "app/pdf/files")

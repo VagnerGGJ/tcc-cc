@@ -9,6 +9,7 @@ from app.config import SECRET_KEY, ALGORITHM
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def get_current_admin(token: str = Depends(oauth2_scheme)):
+    print("Token recebido:", token)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")

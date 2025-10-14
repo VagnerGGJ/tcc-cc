@@ -10,9 +10,9 @@ from app.auth.security import hash_password
 db = SessionLocal()
 
 admin = AdminUser(
-    username="admin",
-    email="admin@tcc.com",
-    password_hash=hash_password("123456")
+    username="teste123",
+    email="admin123@tcc.com",
+    password_hash=hash_password("654321")
 )
 
 db.add(admin)
